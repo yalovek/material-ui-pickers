@@ -1,7 +1,7 @@
 import { Theme } from '@material-ui/core';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -18,27 +18,37 @@ const animationDuration = 350;
 
 const SlideTransition: React.SFC<SlideTransitionProps> = ({
   classes,
-  className,
+  className = null,
   children,
   transKey,
   slideDirection,
-}) => (
-  <TransitionGroup className={classnames(classes.transitionContainer, className)}>
-    <CSSTransition
-      key={transKey}
-      mountOnEnter
-      unmountOnExit
-      timeout={animationDuration}
-      children={children}
-      classNames={{
-        enter: classes[`slideEnter-${slideDirection}`],
-        enterActive: classes.slideEnterActive,
-        exit: classes.slideExit,
-        exitActive: classes[`slideExitActiveLeft-${slideDirection}`],
-      }}
-    />
-  </TransitionGroup>
-);
+}) => {
+  const transitionClasses = {
+    enter: classes['slideEnter-' + slideDirection],
+    enterActive: classes.slideEnterActive,
+    exit: classes.slideExit,
+    exitActive: classes['slideExitActiveLeft-' + slideDirection],
+  };
+  return (
+    <TransitionGroup
+      className={clsx(classes.transitionContainer, className)}
+      childFactory={element =>
+        React.cloneElement(element, {
+          classNames: transitionClasses,
+        })
+      }
+    >
+      <CSSTransition
+        key={transKey}
+        mountOnEnter
+        unmountOnExit
+        timeout={animationDuration}
+        children={children}
+        classNames={transitionClasses}
+      />
+    </TransitionGroup>
+  );
+};
 
 (SlideTransition as any).propTypes = {
   children: PropTypes.node.isRequired,
