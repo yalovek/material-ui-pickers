@@ -48,15 +48,15 @@ export const getError = (
   }
 
   if (
-    (maxDate && utils.isAfter(value, utils.endOfDay(utils.date(maxDate)))) ||
-    (disableFuture && utils.isAfter(value, utils.endOfDay(utils.date())))
+    (maxDate && utils.getDiff(utils.date(maxDate), value) >= 0) ||
+    (disableFuture && utils.getDiff(utils.date(), value) >= 0)
   ) {
     return maxDateMessage;
   }
 
   if (
-    (minDate && utils.isBefore(value, utils.startOfDay(utils.date(minDate)))) ||
-    (disablePast && utils.isBefore(value, utils.startOfDay(utils.date())))
+    (minDate && utils.getDiff(utils.date(minDate), value) <= 0) ||
+    (disablePast && utils.getDiff(utils.date(), value) <= 0)
   ) {
     return minDateMessage;
   }
